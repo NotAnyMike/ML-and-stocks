@@ -4,4 +4,4 @@ these are the values of the different configurations tested here and the score o
 
 ![configs][configs]
 
-[configs]: img/1.png "Logo Title Text 2"
+[configs]: img/1.png "different configs"
