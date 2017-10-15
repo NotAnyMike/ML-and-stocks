@@ -18,15 +18,13 @@ X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
 X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)
 y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
 y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-
-X_train <- X_train[1:939,]
   
 # only take 1000 samples, otherwise training takes increasingly long
 chosenRowsTrain <- sample(1:nrow(trainData), size=1000)
 trainDataSmall <- trainData[chosenRowsTrain,]
 trainLabelsSmall <- trainLabels[chosenRowsTrain,]
   
-darch  <- darch(X_train, y_train,
+darch  <- darch(trainDataSmall, trainLabelsSmall,
   rbm.numEpochs = 5,
   rbm.consecutive = F, # each RBM is trained one epoch at a time
   rbm.batchSize = 100,
@@ -41,7 +39,7 @@ darch  <- darch(X_train, y_train,
   rbm.numCD = 2,
   rbm.unitFunction = sigmoidUnitRbm,
   rbm.weightDecay = .001,
-  layers = c(6,10,5),
+  layers = c(784,100,10),
   darch.batchSize = 100,
   darch.dither = T,
   darch.initialMomentum = .4,
@@ -56,7 +54,7 @@ darch  <- darch(X_train, y_train,
   gputools.deviceId = 0
 )
 
-predictions <- predict(darch, newdata=X_test, type="class")
+predictions <- predict(darch, newdata=testData, type="class")
   
 labels <- cbind(predictions, testLabels)
 numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))

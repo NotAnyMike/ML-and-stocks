@@ -1,0 +1,463 @@
+# MNIST example with pre-training#
+dataFolder = "data/"#
+downloadMNIST = T#
+# Make sure to prove the correct folder if you have already downloaded the#
+# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
+provideMNIST(dataFolder, downloadMNIST)#
+# Load MNIST data#
+load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
+load(paste0(dataFolder, "test.RData")) # testData, testLabels#
+# only take 1000 samples, otherwise training takes increasingly long#
+chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
+trainDataSmall <- trainData[chosenRowsTrain,]#
+trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
+darch  <- darch(trainDataSmall, trainLabelsSmall,#
+  rbm.numEpochs = 5,#
+  rbm.consecutive = F, # each RBM is trained one epoch at a time#
+  rbm.batchSize = 100,#
+  rbm.lastLayer = -1, # don't train output layer#
+  rbm.allData = T, # use bootstrap validation data as well for training#
+  rbm.errorFunction = rmseError,#
+  rbm.initialMomentum = .5,#
+  rbm.finalMomentum = .7,#
+  rbm.learnRate = .1,#
+  rbm.learnRateScale = .98,#
+  rbm.momentumRampLength = .8,#
+  rbm.numCD = 2,#
+  rbm.unitFunction = sigmoidUnitRbm,#
+  rbm.weightDecay = .001,#
+  layers = c(784,100,10),#
+  darch.batchSize = 100,#
+  darch.dither = T,#
+  darch.initialMomentum = .4,#
+  darch.finalMomentum = .9,#
+  darch.momentumRampLength = .75,#
+  bp.learnRate = 1,#
+  bp.learnRateScale = .99,#
+  darch.unitFunction = c(tanhUnit, softmaxUnit),#
+  bootstrap = T,#
+  darch.numEpochs = 20,#
+  gputools = T, # try to use gputools#
+  gputools.deviceId = 0#
+)#
+#
+predictions <- predict(darch, newdata=testData, type="class")#
+labels <- cbind(predictions, testLabels)#
+numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
+cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
+           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
+ darch
+# Loading library#
+library(darch)#
+#
+# MNIST example with pre-training#
+dataFolder = "data/"#
+downloadMNIST = T#
+# Make sure to prove the correct folder if you have already downloaded the#
+# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
+provideMNIST(dataFolder, downloadMNIST)#
+# Load MNIST data#
+load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
+load(paste0(dataFolder, "test.RData")) # testData, testLabels#
+# only take 1000 samples, otherwise training takes increasingly long#
+chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
+trainDataSmall <- trainData[chosenRowsTrain,]#
+trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
+darch  <- darch(trainDataSmall, trainLabelsSmall,#
+  rbm.numEpochs = 5,#
+  rbm.consecutive = F, # each RBM is trained one epoch at a time#
+  rbm.batchSize = 100,#
+  rbm.lastLayer = -1, # don't train output layer#
+  rbm.allData = T, # use bootstrap validation data as well for training#
+  rbm.errorFunction = rmseError,#
+  rbm.initialMomentum = .5,#
+  rbm.finalMomentum = .7,#
+  rbm.learnRate = .1,#
+  rbm.learnRateScale = .98,#
+  rbm.momentumRampLength = .8,#
+  rbm.numCD = 2,#
+  rbm.unitFunction = sigmoidUnitRbm,#
+  rbm.weightDecay = .001,#
+  layers = c(784,100,10),#
+  darch.batchSize = 100,#
+  darch.dither = T,#
+  darch.initialMomentum = .4,#
+  darch.finalMomentum = .9,#
+  darch.momentumRampLength = .75,#
+  bp.learnRate = 1,#
+  bp.learnRateScale = .99,#
+  darch.unitFunction = c(tanhUnit, softmaxUnit),#
+  bootstrap = T,#
+  darch.numEpochs = 20,#
+  gputools = T, # try to use gputools#
+  gputools.deviceId = 0#
+)#
+#
+predictions <- predict(darch, newdata=testData, type="class")#
+labels <- cbind(predictions, testLabels)#
+numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
+cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
+           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
+ darch
+darch
+trainData
+trainData.shape
+dim(trainData)
+df <- read.csv(file="../X_train.csv", header=T, sep=",")
+dim(df)
+T, sep=",")#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",")#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",")#
+y_test <- read.csv(file="../y_test.csv", header=T,
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",")#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",")#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",")#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",")
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",")
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",")
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",")
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",")
+dim(y_test)
+y_test
+X_test
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",",row.names=0)
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",",row.names=1)
+y-train
+y_train
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
+y_test
+X_train <- read.csv(file="../X_train.csv", header=T, sep="," row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
+dim(X_train)
+dim(X_test)
+# Loading library#
+library(darch)#
+#
+# MNIST example with pre-training#
+dataFolder = "data/"#
+downloadMNIST = T#
+# Make sure to prove the correct folder if you have already downloaded the#
+# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
+provideMNIST(dataFolder, downloadMNIST)#
+# Load MNIST data#
+load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
+load(paste0(dataFolder, "test.RData")) # testData, testLabels#
+#
+# Load csv#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+# only take 1000 samples, otherwise training takes increasingly long#
+chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
+trainDataSmall <- trainData[chosenRowsTrain,]#
+trainLabelsSmall <- trainLabels[chosenRowsTrain,]
+darch  <- darch(X_train, y_train,#
+  rbm.numEpochs = 5,#
+  rbm.consecutive = F, # each RBM is trained one epoch at a time#
+  rbm.batchSize = 100,#
+  rbm.lastLayer = -1, # don't train output layer#
+  rbm.allData = T, # use bootstrap validation data as well for training#
+  rbm.errorFunction = rmseError,#
+  rbm.initialMomentum = .5,#
+  rbm.finalMomentum = .7,#
+  rbm.learnRate = .1,#
+  rbm.learnRateScale = .98,#
+  rbm.momentumRampLength = .8,#
+  rbm.numCD = 2,#
+  rbm.unitFunction = sigmoidUnitRbm,#
+  rbm.weightDecay = .001,#
+  layers = c(6,100,10),#
+  darch.batchSize = 100,#
+  darch.dither = T,#
+  darch.initialMomentum = .4,#
+  darch.finalMomentum = .9,#
+  darch.momentumRampLength = .75,#
+  bp.learnRate = 1,#
+  bp.learnRateScale = .99,#
+  darch.unitFunction = c(tanhUnit, softmaxUnit),#
+  bootstrap = T,#
+  darch.numEpochs = 20,#
+  gputools = T, # try to use gputools#
+  gputools.deviceId = 0#
+)
+dim(X_train)
+dim(y_train)
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
+dim(y_train)
+> y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
+dim(y_train)
+X_train
+y_train
+# Loading library#
+library(darch)#
+#
+# MNIST example with pre-training#
+dataFolder = "data/"#
+downloadMNIST = T#
+# Make sure to prove the correct folder if you have already downloaded the#
+# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
+provideMNIST(dataFolder, downloadMNIST)#
+# Load MNIST data#
+load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
+load(paste0(dataFolder, "test.RData")) # testData, testLabels#
+#
+# Load csv#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+# only take 1000 samples, otherwise training takes increasingly long#
+chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
+trainDataSmall <- trainData[chosenRowsTrain,]#
+trainLabelsSmall <- trainLabels[chosenRowsTrain,]
+y_test
+dim(y_test)
+dim(y_train)
+dim(x_train)
+dim(X_train)
+dim(X_train[:939])
+dim(X_train[:939,:])
+dim(X_train[0:939,:])
+dim(X_train[0:939,])
+X_train <- X_train[0:939,]
+dim(X_train)
+darch  <- darch(X_train, y_train,#
+  rbm.numEpochs = 5,#
+  rbm.consecutive = F, # each RBM is trained one epoch at a time#
+  rbm.batchSize = 100,#
+  rbm.lastLayer = -1, # don't train output layer#
+  rbm.allData = T, # use bootstrap validation data as well for training#
+  rbm.errorFunction = rmseError,#
+  rbm.initialMomentum = .5,#
+  rbm.finalMomentum = .7,#
+  rbm.learnRate = .1,#
+  rbm.learnRateScale = .98,#
+  rbm.momentumRampLength = .8,#
+  rbm.numCD = 2,#
+  rbm.unitFunction = sigmoidUnitRbm,#
+  rbm.weightDecay = .001,#
+  layers = c(6,100,10),#
+  darch.batchSize = 100,#
+  darch.dither = T,#
+  darch.initialMomentum = .4,#
+  darch.finalMomentum = .9,#
+  darch.momentumRampLength = .75,#
+  bp.learnRate = 1,#
+  bp.learnRateScale = .99,#
+  darch.unitFunction = c(tanhUnit, softmaxUnit),#
+  bootstrap = T,#
+  darch.numEpochs = 20,#
+  gputools = T, # try to use gputools#
+  gputools.deviceId = 0#
+)#
+#
+predictions <- predict(darch, newdata=X_test, type="class")#
+labels <- cbind(predictions, testLabels)#
+numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
+cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
+           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
+ darch
+# Loading library#
+library(darch)#
+#
+# MNIST example with pre-training#
+dataFolder = "data/"#
+downloadMNIST = T#
+# Make sure to prove the correct folder if you have already downloaded the#
+# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
+provideMNIST(dataFolder, downloadMNIST)#
+# Load MNIST data#
+load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
+load(paste0(dataFolder, "test.RData")) # testData, testLabels#
+#
+# Load csv#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+# only take 1000 samples, otherwise training takes increasingly long#
+chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
+trainDataSmall <- trainData[chosenRowsTrain,]#
+trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
+darch  <- darch(X_train, y_train,#
+  rbm.numEpochs = 5,#
+  rbm.consecutive = F, # each RBM is trained one epoch at a time#
+  rbm.batchSize = 100,#
+  rbm.lastLayer = -1, # don't train output layer#
+  rbm.allData = T, # use bootstrap validation data as well for training#
+  rbm.errorFunction = rmseError,#
+  rbm.initialMomentum = .5,#
+  rbm.finalMomentum = .7,#
+  rbm.learnRate = .1,#
+  rbm.learnRateScale = .98,#
+  rbm.momentumRampLength = .8,#
+  rbm.numCD = 2,#
+  rbm.unitFunction = sigmoidUnitRbm,#
+  rbm.weightDecay = .001,#
+  layers = c(6,1000,5),#
+  darch.batchSize = 100,#
+  darch.dither = T,#
+  darch.initialMomentum = .4,#
+  darch.finalMomentum = .9,#
+  darch.momentumRampLength = .75,#
+  bp.learnRate = 1,#
+  bp.learnRateScale = .99,#
+  darch.unitFunction = c(tanhUnit, softmaxUnit),#
+  bootstrap = T,#
+  darch.numEpochs = 20,#
+  gputools = T, # try to use gputools#
+  gputools.deviceId = 0#
+)#
+#
+predictions <- predict(darch, newdata=X_test, type="class")#
+labels <- cbind(predictions, testLabels)#
+numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
+cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
+           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
+ darch
+# Loading library#
+library(darch)#
+#
+# MNIST example with pre-training#
+dataFolder = "data/"#
+downloadMNIST = T#
+# Make sure to prove the correct folder if you have already downloaded the#
+# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
+provideMNIST(dataFolder, downloadMNIST)#
+# Load MNIST data#
+load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
+load(paste0(dataFolder, "test.RData")) # testData, testLabels#
+#
+# Load csv#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+# only take 1000 samples, otherwise training takes increasingly long#
+chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
+trainDataSmall <- trainData[chosenRowsTrain,]#
+trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
+darch  <- darch(X_train, y_train,#
+  rbm.numEpochs = 5,#
+  rbm.consecutive = F, # each RBM is trained one epoch at a time#
+  rbm.batchSize = 100,#
+  rbm.lastLayer = -1, # don't train output layer#
+  rbm.allData = T, # use bootstrap validation data as well for training#
+  rbm.errorFunction = rmseError,#
+  rbm.initialMomentum = .5,#
+  rbm.finalMomentum = .7,#
+  rbm.learnRate = .1,#
+  rbm.learnRateScale = .98,#
+  rbm.momentumRampLength = .8,#
+  rbm.numCD = 2,#
+  rbm.unitFunction = sigmoidUnitRbm,#
+  rbm.weightDecay = .001,#
+  layers = c(6,10,5),#
+  darch.batchSize = 100,#
+  darch.dither = T,#
+  darch.initialMomentum = .4,#
+  darch.finalMomentum = .9,#
+  darch.momentumRampLength = .75,#
+  bp.learnRate = 1,#
+  bp.learnRateScale = .99,#
+  darch.unitFunction = c(tanhUnit, softmaxUnit),#
+  bootstrap = T,#
+  darch.numEpochs = 20,#
+  gputools = T, # try to use gputools#
+  gputools.deviceId = 0#
+)#
+#
+predictions <- predict(darch, newdata=X_test, type="class")#
+labels <- cbind(predictions, testLabels)#
+numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
+cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
+           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
+ darch
+library(darch)#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+#
+rbm <- RBM()
+rbm <- RBM()
+rbm <- RBM
+rbm <- newRBM()
+rbm <- newRBM(numVisible=6, numHidden=100, ff= F)
+library(darch)
+rbm <- newRBM(numVisible=6, numHidden=100, ff= F)
+rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
+sessionInfo()
+library(darch)
+sessionInfo()
+library(darch)
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
+X_train <- X_train[1:939,]
+rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
+sessionInfo()
+library(darch)
+sessionInfo()
+library(darch)
+sessionInfo()
+rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
+rbm <- newRMBh(numVisible=6, numHidden=100, ff= F)
+rbm <- newRMB(numVisible=6, numHidden=100, ff= F)
+rbm <- newRBM(numVisible=6, numHidden=100, ff= F)
+rbm <- RBM(numVisible=6, numHidden=100, ff= F)
+rbm <- rbm(numVisible=6, numHidden=100, ff= F)
+darch <- newDArch(c(2,4,1),batchSize=2)
+darch <- newDArch(c(2,4,1),batchSize = 2,genWeightFunc #
+       = generateWeights)
+library(darch)
+install.packages("darch")
+system('defaults write org.R-project.R force.LANG en_US.UTF-8')
+library(darch)#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]
+rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
+rbm <- RBM(numVisible=6, numHidden=100, ff= F)
+darch
+rbm
+RBM
+darch.rbm
+sessioninfo()
+sessionInfo()
+darch ← newDArch(c(2,4,1),batchSize = 2,genWeightFunc #
+       = generateWeights)
+darch <- newDArch(c(2,4,1),batchSize = 2,genWeightFunc
+= generateWeights)
+darch <- rbm(c(2,4,1),batchSize = 2,genWeightFunc = generateWeights)
+rbm <- RBM(numVisible=6, numHidden=100, ff= F)
+install.package("deepr")
+package.install("deepr")
+?darch
