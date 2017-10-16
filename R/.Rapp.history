@@ -1,289 +1,29 @@
-# MNIST example with pre-training#
-dataFolder = "data/"#
-downloadMNIST = T#
-# Make sure to prove the correct folder if you have already downloaded the#
-# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
-provideMNIST(dataFolder, downloadMNIST)#
-# Load MNIST data#
-load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
-load(paste0(dataFolder, "test.RData")) # testData, testLabels#
-# only take 1000 samples, otherwise training takes increasingly long#
-chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
-trainDataSmall <- trainData[chosenRowsTrain,]#
-trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
-darch  <- darch(trainDataSmall, trainLabelsSmall,#
-  rbm.numEpochs = 5,#
-  rbm.consecutive = F, # each RBM is trained one epoch at a time#
-  rbm.batchSize = 100,#
-  rbm.lastLayer = -1, # don't train output layer#
-  rbm.allData = T, # use bootstrap validation data as well for training#
-  rbm.errorFunction = rmseError,#
-  rbm.initialMomentum = .5,#
-  rbm.finalMomentum = .7,#
-  rbm.learnRate = .1,#
-  rbm.learnRateScale = .98,#
-  rbm.momentumRampLength = .8,#
-  rbm.numCD = 2,#
-  rbm.unitFunction = sigmoidUnitRbm,#
-  rbm.weightDecay = .001,#
-  layers = c(784,100,10),#
-  darch.batchSize = 100,#
-  darch.dither = T,#
-  darch.initialMomentum = .4,#
-  darch.finalMomentum = .9,#
-  darch.momentumRampLength = .75,#
-  bp.learnRate = 1,#
-  bp.learnRateScale = .99,#
-  darch.unitFunction = c(tanhUnit, softmaxUnit),#
-  bootstrap = T,#
-  darch.numEpochs = 20,#
-  gputools = T, # try to use gputools#
-  gputools.deviceId = 0#
-)#
+transformed_test <- rbm.up(rbm, X_test)
+X_test <- as.matrix(X_test)
+transformed_test <- rbm.up(rbm, X_test)
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = c(10), activationfun = "sigm", learningrate = 0.8, momentum = 0.5, learningrate_scale = 1, output = "sigm", numepochs = 3, batchsize = 100, hidden_dropout = 0, visible_dropout = 0)
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)
+rbm <- rbm.train(x=X_train, hidden=100, numepochs = 3, batchsize = 100, learningrate = 0.8, learningrate_scale = 1, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = 1)#
 #
-predictions <- predict(darch, newdata=testData, type="class")#
-labels <- cbind(predictions, testLabels)#
-numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
-cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
-           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
- darch
-# Loading library#
-library(darch)#
-#
-# MNIST example with pre-training#
-dataFolder = "data/"#
-downloadMNIST = T#
-# Make sure to prove the correct folder if you have already downloaded the#
-# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
-provideMNIST(dataFolder, downloadMNIST)#
-# Load MNIST data#
-load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
-load(paste0(dataFolder, "test.RData")) # testData, testLabels#
-# only take 1000 samples, otherwise training takes increasingly long#
-chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
-trainDataSmall <- trainData[chosenRowsTrain,]#
-trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
-darch  <- darch(trainDataSmall, trainLabelsSmall,#
-  rbm.numEpochs = 5,#
-  rbm.consecutive = F, # each RBM is trained one epoch at a time#
-  rbm.batchSize = 100,#
-  rbm.lastLayer = -1, # don't train output layer#
-  rbm.allData = T, # use bootstrap validation data as well for training#
-  rbm.errorFunction = rmseError,#
-  rbm.initialMomentum = .5,#
-  rbm.finalMomentum = .7,#
-  rbm.learnRate = .1,#
-  rbm.learnRateScale = .98,#
-  rbm.momentumRampLength = .8,#
-  rbm.numCD = 2,#
-  rbm.unitFunction = sigmoidUnitRbm,#
-  rbm.weightDecay = .001,#
-  layers = c(784,100,10),#
-  darch.batchSize = 100,#
-  darch.dither = T,#
-  darch.initialMomentum = .4,#
-  darch.finalMomentum = .9,#
-  darch.momentumRampLength = .75,#
-  bp.learnRate = 1,#
-  bp.learnRateScale = .99,#
-  darch.unitFunction = c(tanhUnit, softmaxUnit),#
-  bootstrap = T,#
-  darch.numEpochs = 20,#
-  gputools = T, # try to use gputools#
-  gputools.deviceId = 0#
-)#
-#
-predictions <- predict(darch, newdata=testData, type="class")#
-labels <- cbind(predictions, testLabels)#
-numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
-cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
-           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
- darch
-darch
-trainData
-trainData.shape
-dim(trainData)
-df <- read.csv(file="../X_train.csv", header=T, sep=",")
-dim(df)
-T, sep=",")#
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",")#
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",")#
-y_test <- read.csv(file="../y_test.csv", header=T,
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",")#
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",")#
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",")#
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",")
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",")
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",")
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",")
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",")
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = c(10), activationfun = "sigm", learningrate = 0.8, momentum = 0.5, learningrate_scale = 1, output = "sigm", numepochs = 3, batchsize = 100, hidden_dropout = 0, visible_dropout = 0)
+nn.test(nn, transformed_test, y_test, t = 0.5)
+dim(transformed_test)
 dim(y_test)
-y_test
-X_test
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",",row.names=0)
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",",row.names=1)
-y-train
-y_train
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-y_test
-X_train <- read.csv(file="../X_train.csv", header=T, sep="," row.names=1)#
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-dim(X_train)
-dim(X_test)
-# Loading library#
-library(darch)#
-#
-# MNIST example with pre-training#
-dataFolder = "data/"#
-downloadMNIST = T#
-# Make sure to prove the correct folder if you have already downloaded the#
-# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
-provideMNIST(dataFolder, downloadMNIST)#
-# Load MNIST data#
-load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
-load(paste0(dataFolder, "test.RData")) # testData, testLabels#
-#
-# Load csv#
-#
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
-# only take 1000 samples, otherwise training takes increasingly long#
-chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
-trainDataSmall <- trainData[chosenRowsTrain,]#
-trainLabelsSmall <- trainLabels[chosenRowsTrain,]
-darch  <- darch(X_train, y_train,#
-  rbm.numEpochs = 5,#
-  rbm.consecutive = F, # each RBM is trained one epoch at a time#
-  rbm.batchSize = 100,#
-  rbm.lastLayer = -1, # don't train output layer#
-  rbm.allData = T, # use bootstrap validation data as well for training#
-  rbm.errorFunction = rmseError,#
-  rbm.initialMomentum = .5,#
-  rbm.finalMomentum = .7,#
-  rbm.learnRate = .1,#
-  rbm.learnRateScale = .98,#
-  rbm.momentumRampLength = .8,#
-  rbm.numCD = 2,#
-  rbm.unitFunction = sigmoidUnitRbm,#
-  rbm.weightDecay = .001,#
-  layers = c(6,100,10),#
-  darch.batchSize = 100,#
-  darch.dither = T,#
-  darch.initialMomentum = .4,#
-  darch.finalMomentum = .9,#
-  darch.momentumRampLength = .75,#
-  bp.learnRate = 1,#
-  bp.learnRateScale = .99,#
-  darch.unitFunction = c(tanhUnit, softmaxUnit),#
-  bootstrap = T,#
-  darch.numEpochs = 20,#
-  gputools = T, # try to use gputools#
-  gputools.deviceId = 0#
-)
-dim(X_train)
-dim(y_train)
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-dim(y_train)
-> y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
-dim(y_train)
-X_train
-y_train
-# Loading library#
-library(darch)#
-#
-# MNIST example with pre-training#
-dataFolder = "data/"#
-downloadMNIST = T#
-# Make sure to prove the correct folder if you have already downloaded the#
-# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
-provideMNIST(dataFolder, downloadMNIST)#
-# Load MNIST data#
-load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
-load(paste0(dataFolder, "test.RData")) # testData, testLabels#
-#
-# Load csv#
-#
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
-# only take 1000 samples, otherwise training takes increasingly long#
-chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
-trainDataSmall <- trainData[chosenRowsTrain,]#
-trainLabelsSmall <- trainLabels[chosenRowsTrain,]
-y_test
+X_test <- X_test[1:313,]
+nn.test(nn, transformed_test, y_test, t = 0.5)
 dim(y_test)
-dim(y_train)
-dim(x_train)
-dim(X_train)
-dim(X_train[:939])
-dim(X_train[:939,:])
-dim(X_train[0:939,:])
-dim(X_train[0:939,])
-X_train <- X_train[0:939,]
-dim(X_train)
-darch  <- darch(X_train, y_train,#
-  rbm.numEpochs = 5,#
-  rbm.consecutive = F, # each RBM is trained one epoch at a time#
-  rbm.batchSize = 100,#
-  rbm.lastLayer = -1, # don't train output layer#
-  rbm.allData = T, # use bootstrap validation data as well for training#
-  rbm.errorFunction = rmseError,#
-  rbm.initialMomentum = .5,#
-  rbm.finalMomentum = .7,#
-  rbm.learnRate = .1,#
-  rbm.learnRateScale = .98,#
-  rbm.momentumRampLength = .8,#
-  rbm.numCD = 2,#
-  rbm.unitFunction = sigmoidUnitRbm,#
-  rbm.weightDecay = .001,#
-  layers = c(6,100,10),#
-  darch.batchSize = 100,#
-  darch.dither = T,#
-  darch.initialMomentum = .4,#
-  darch.finalMomentum = .9,#
-  darch.momentumRampLength = .75,#
-  bp.learnRate = 1,#
-  bp.learnRateScale = .99,#
-  darch.unitFunction = c(tanhUnit, softmaxUnit),#
-  bootstrap = T,#
-  darch.numEpochs = 20,#
-  gputools = T, # try to use gputools#
-  gputools.deviceId = 0#
-)#
-#
-predictions <- predict(darch, newdata=X_test, type="class")#
-labels <- cbind(predictions, testLabels)#
-numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
-cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
-           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
- darch
-# Loading library#
-library(darch)#
-#
-# MNIST example with pre-training#
-dataFolder = "data/"#
-downloadMNIST = T#
-# Make sure to prove the correct folder if you have already downloaded the#
-# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
-provideMNIST(dataFolder, downloadMNIST)#
-# Load MNIST data#
-load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
-load(paste0(dataFolder, "test.RData")) # testData, testLabels#
-#
-# Load csv#
+dim(transformed_test)
+transformed_train <- rbm.up(rbm, X_train)
+transformed_test <- rbm.up(rbm, X_test)
+nn.test(nn, transformed_test, y_test, t = 0.5)
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = c(10), activationfun = "sigm", learningrate = 0.001, momentum = 0.5, learningrate_scale = 1, output = "sigm", numepochs = 3, batchsize = 100, hidden_dropout = 0, visible_dropout = 0)
+nn.test(nn, transformed_test, y_test, t = 0.5)
+library(deepnet)#
 #
 X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
 X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
@@ -291,173 +31,2430 @@ y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
 y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
 #
 X_train <- X_train[1:939,]#
-# only take 1000 samples, otherwise training takes increasingly long#
-chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
-trainDataSmall <- trainData[chosenRowsTrain,]#
-trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
-darch  <- darch(X_train, y_train,#
-  rbm.numEpochs = 5,#
-  rbm.consecutive = F, # each RBM is trained one epoch at a time#
-  rbm.batchSize = 100,#
-  rbm.lastLayer = -1, # don't train output layer#
-  rbm.allData = T, # use bootstrap validation data as well for training#
-  rbm.errorFunction = rmseError,#
-  rbm.initialMomentum = .5,#
-  rbm.finalMomentum = .7,#
-  rbm.learnRate = .1,#
-  rbm.learnRateScale = .98,#
-  rbm.momentumRampLength = .8,#
-  rbm.numCD = 2,#
-  rbm.unitFunction = sigmoidUnitRbm,#
-  rbm.weightDecay = .001,#
-  layers = c(6,1000,5),#
-  darch.batchSize = 100,#
-  darch.dither = T,#
-  darch.initialMomentum = .4,#
-  darch.finalMomentum = .9,#
-  darch.momentumRampLength = .75,#
-  bp.learnRate = 1,#
-  bp.learnRateScale = .99,#
-  darch.unitFunction = c(tanhUnit, softmaxUnit),#
-  bootstrap = T,#
-  darch.numEpochs = 20,#
-  gputools = T, # try to use gputools#
-  gputools.deviceId = 0#
-)#
+X_test <- X_test[1:313,]#
 #
-predictions <- predict(darch, newdata=X_test, type="class")#
-labels <- cbind(predictions, testLabels)#
-numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
-cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
-           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
- darch
-# Loading library#
-library(darch)#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
 #
-# MNIST example with pre-training#
-dataFolder = "data/"#
-downloadMNIST = T#
-# Make sure to prove the correct folder if you have already downloaded the#
-# MNIST data somewhere, or otherwise set downloadMNIST to TRUE#
-provideMNIST(dataFolder, downloadMNIST)#
-# Load MNIST data#
-load(paste0(dataFolder, "train.RData")) # trainData, trainLabels#
-load(paste0(dataFolder, "test.RData")) # testData, testLabels#
+rbm <- rbm.train(x=X_train, hidden=10, numepochs = 3, batchsize = 100, learningrate = 0.8, learningrate_scale = 1, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = 1)#
 #
-# Load csv#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
 #
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = c(10), activationfun = "sigm", learningrate = 0.001, momentum = 0.5, learningrate_scale = 1, output = "sigm", numepochs = 3, batchsize = 100, hidden_dropout = 0, visible_dropout = 0)#
+#
+nn.test(nn, transformed_test, y_test, t = 0.5)
+rbm <- rbm.train(x=X_train, hidden=1, numepochs = 3, batchsize = 100, learningrate = 0.8, learningrate_scale = 1, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = 1)
+rbm <- rbm.train(x=X_train, hidden=1, numepochs = 3, batchsize = 100, learningrate = 0.8, learningrate_scale = 1, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = 1)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = c(10), activationfun = "sigm", learningrate = 0.001, momentum = 0.5, learningrate_scale = 1, output = "sigm", numepochs = 3, batchsize = 100, hidden_dropout = 0, visible_dropout = 0)#
+#
+nn.test(nn, transformed_test, y_test, t = 0.5)
+c(1,3,4)
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = c(10,10), activationfun = "sigm", learningrate = 0.001, momentum = 0.5, learningrate_scale = 1, output = "sigm", numepochs = 3, batchsize = 100, hidden_dropout = 0, visible_dropout = 0)
+nn.test(nn, transformed_test, y_test, t = 0.5)
+library(deepnet)#
+#
+hidden_rbm <- 1#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_rbm <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
 X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
 X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
 y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
 y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
 #
 X_train <- X_train[1:939,]#
-# only take 1000 samples, otherwise training takes increasingly long#
-chosenRowsTrain <- sample(1:nrow(trainData), size=1000)#
-trainDataSmall <- trainData[chosenRowsTrain,]#
-trainLabelsSmall <- trainLabels[chosenRowsTrain,]#
-darch  <- darch(X_train, y_train,#
-  rbm.numEpochs = 5,#
-  rbm.consecutive = F, # each RBM is trained one epoch at a time#
-  rbm.batchSize = 100,#
-  rbm.lastLayer = -1, # don't train output layer#
-  rbm.allData = T, # use bootstrap validation data as well for training#
-  rbm.errorFunction = rmseError,#
-  rbm.initialMomentum = .5,#
-  rbm.finalMomentum = .7,#
-  rbm.learnRate = .1,#
-  rbm.learnRateScale = .98,#
-  rbm.momentumRampLength = .8,#
-  rbm.numCD = 2,#
-  rbm.unitFunction = sigmoidUnitRbm,#
-  rbm.weightDecay = .001,#
-  layers = c(6,10,5),#
-  darch.batchSize = 100,#
-  darch.dither = T,#
-  darch.initialMomentum = .4,#
-  darch.finalMomentum = .9,#
-  darch.momentumRampLength = .75,#
-  bp.learnRate = 1,#
-  bp.learnRateScale = .99,#
-  darch.unitFunction = c(tanhUnit, softmaxUnit),#
-  bootstrap = T,#
-  darch.numEpochs = 20,#
-  gputools = T, # try to use gputools#
-  gputools.deviceId = 0#
-)#
+X_test <- X_test[1:313,]#
 #
-predictions <- predict(darch, newdata=X_test, type="class")#
-labels <- cbind(predictions, testLabels)#
-numIncorrect <- sum(apply(labels, 1, function(i) { any(i[1:10] != i[11:20]) }))#
-cat(paste0("Incorrect classifications on test data: ", numIncorrect,#
-           " (", round(numIncorrect/nrow(testLabels)*100, 2), "%)\n"))#
- darch
-library(darch)#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)
+rbm <- rbm.train(x=X_train, hidden=hidden_rb,, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
 #
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+nn.test(nn, transformed_test, y_test, t = 0.5)
+rbm <- rbm.train(x=X_train, hidden=hidden_rb,, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
+rbm <- rbm.train(x=X_train, hidden=hidden_rb, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
+hidden_nn <- c(10)
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
+nn.test(nn, transformed_test, y_test, t = 0.5)
+configs = data.frame(hidden_rbm=float())
+configs = data.frame(hidden_rbm=numeric())
+config
+configs
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric())
+configs
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric())
+configs <- c(1,2,3,4,5,6,7,8)
+configs
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric())
+configs <- rbind(configs,c(1,2,3,4,5,6,7,8))
+configs
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric())
+configs <- rbind(configs,c(1,2,3,4,5,6,7,8))
+configs
+configs <- rbind(configs.df,c(1,2,3,4,5,6,7,8))
+configs <- rbind(configs,c(1,2,3,4,5,6,7,8))
+configs
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric())
+configs
+configs = data.frame(hidden_rbm=1, numempochs_rbm=2, batchsize_rbm=3, lr_rbm=4, cd=4, hidden_nn=4, lr_nn=5, numepochs_nn=9, batchsize_nn=9)
+configs
+configs = data.frame(hidden_rbm=1, numempochs_rbm=2, batchsize_rbm=3, lr_rbm=4, cd=4, hidden_nn=4, lr_nn=5, numepochs_nn=9, batchsize_nn=9)
+configs
+configs = rbind(configs,data.frame(hidden_rbm=1, numempochs_rbm=2, batchsize_rbm=3, lr_rbm=4, cd=4, hidden_nn=4, lr_nn=5, numepochs_nn=9, batchsize_nn=9))
+configs
+library(deepnet)#
+#
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 1#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
 X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
 X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
 y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
 y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
 #
 X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
 #
-rbm <- RBM()
-rbm <- RBM()
-rbm <- RBM
-rbm <- newRBM()
-rbm <- newRBM(numVisible=6, numHidden=100, ff= F)
-library(darch)
-rbm <- newRBM(numVisible=6, numHidden=100, ff= F)
-rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
-sessionInfo()
-library(darch)
-sessionInfo()
-library(darch)
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=1, numempochs_rbm=2, batchsize_rbm=3, lr_rbm=4, cd=4, hidden_nn=4, lr_nn=5, numepochs_nn=9, batchsize_nn=9, score=score))
+library(deepnet)#
+#
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 1#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=1, numempochs_rbm=2, batchsize_rbm=3, lr_rbm=4, cd=4, hidden_nn=4, lr_nn=5, numepochs_nn=9, batchsize_nn=9, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 10#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=1, numempochs_rbm=2, batchsize_rbm=3, lr_rbm=4, cd=4, hidden_nn=4, lr_nn=5, numepochs_nn=9, batchsize_nn=9, score=score))#
+configs#
+score
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm=numempochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 10#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 1#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+hidden_rbm <- 10
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 10#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+hidden_rbm <- 100
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.8#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 1#
+cd <- 1#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 3#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(5)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 3#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(1000)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 100#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 30#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 60#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 100#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 30#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 60#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(100)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+y_train
+as.vector(t(c(1,3)))
+as.vector(t(1))
+as.vector(t(2))
+library(onehot)
+c <- onehot(y_test)
 y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-X_train <- X_train[1:939,]
-rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
-sessionInfo()
-library(darch)
-sessionInfo()
-library(darch)
-sessionInfo()
-rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
-rbm <- newRMBh(numVisible=6, numHidden=100, ff= F)
-rbm <- newRMB(numVisible=6, numHidden=100, ff= F)
-rbm <- newRBM(numVisible=6, numHidden=100, ff= F)
-rbm <- RBM(numVisible=6, numHidden=100, ff= F)
-rbm <- rbm(numVisible=6, numHidden=100, ff= F)
-darch <- newDArch(c(2,4,1),batchSize=2)
-darch <- newDArch(c(2,4,1),batchSize = 2,genWeightFunc #
-       = generateWeights)
-library(darch)
-install.packages("darch")
-system('defaults write org.R-project.R force.LANG en_US.UTF-8')
-library(darch)#
+c <- onehot(y_test)
+c
+c
+onehot(y_test)
+c <- predict(c, y_test)
+c
+c <- onehot(y_test,stringsAsFactors = FALSE, addNA = FALSE, max_levels = 10)
+c
+c12 <- onehot(y_test,stringsAsFactors = FALSE, addNA = FALSE, max_levels = 10)
+c12
+as.matrix(c12)
+cbind(with(y_test, model.matrix(~ v1 + 0)), with(df, model.matrix(~ v2 + 0)))
+model.matrix(~ . + 0, data=y_test, contrasts.arg = lapply(df, contrasts, contrasts=FALSE))
+model.matrix(~ . + 0, data=y_test, contrasts.arg = lapply(y_test, contrasts, contrasts=FALSE))
+c12
+c12 <- onehot(y_test,stringsAsFactors = T, addNA = FALSE, max_levels = 10)
+c12
+c12
+for y in t_test {}
+for(y in t_test) {print y}
+for(y in t_test) {print(y)}
+for(y in y_test) {print(y)}
+nrow=3, #
++   ncol=2
+matrix(nrow=3, #
++   ncol=2)
+matrix(nrow=3, ncol=2)
+matrix(nrow=dim(y_test), ncol=max(y_test))
+matrix(nrow=dim(y_test), ncol=max(y_test)+1)
+y_test
+matrix(0L, nrow=dim(y_test), ncol=max(y_test)+1)
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test{#
+	onehot_test[counter][y] = 1#
+	counter <- counter+1#
+}
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test){#
+	onehot_test[counter][y] = 1#
+	counter <- counter+1#
+}
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test){#
+	onehot_test[counter][y] <- 1#
+	counter <- counter+1#
+}
+onehot_test[counter,y] <- 1
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test){#
+	onehot_test[counter,y] <- 1#
+	counter <- counter+1#
+}
+onehot_test
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test){#
+	onehot_test[counter,y] <- 1#
+	counter <- counter+1#
+}
+onehot_test
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test){#
+	onehot_test[counter,y] <- 1#
+	print(y)#
+	counter <- counter+1#
+}
+print(y, counter)
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test){#
+	onehot_test[counter,y] <- 1#
+	print(y, counter)#
+	counter <- counter+1#
+}#
+onehot_train = matrix(nrow=dim(y_train), ncol=max(y_train))
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in y_test){#
+	onehot_test[counter,y] <- 1#
+	print(counter)#
+	counter <- counter+1#
+}
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in 1:dim(y_test)){#
+	onehot_test[counter,y_test[y]] <- 1#
+	print(counter)#
+	counter <- counter+1#
+}
+onehot_test
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in 1:dim(y_test)){#
+	onehot_test[counter,y_test[y]] = 1#
+	print(counter)#
+	counter <- counter+1#
+}
+onehot_test
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in 1:dim(y_test)){#
+	onehot_test[counter,y_test[y]] = 1#
+	print(counter)#
+	counter <- counter+1#
+}
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test))#
+counter <- 1#
+for(y in 1:dim(y_test)){#
+	onehot_test[counter][y_test[y]] = 1#
+	print(counter)#
+	counter <- counter+1#
+}
+onehot_test[1]
+onehot_test[1,1]
+onehot_test[12]
+onehot_test[]
+onehot_test[1,]
+onehot_test[1,2]
+onehot_test[1,2] <- 1
+onehot_test[1,2]
+onehot_test[1,]
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)){#
+	onehot_test[counter,y_test[y]] <- 1#
+	print(counter)#
+	counter <- counter+1#
+}
+y_test[1]
+y_test
+y_test[1,]
+y_test[1]
+onehot_test <- matrix(0L, nrow=dim(y_test), ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	print(counter)#
+	counter <- counter+1#
+}
+onehot_test
+dim(y_test)
+dim(y_test)[1]
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	print(counter)#
+	counter <- counter+1#
+}
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}
+onehot_test
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}
+onehot_train
+onehot_test
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, onehot_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, onehot_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+integer(3)
+rbind(configs,integer(23))
+configs['score']
+configs['onehot'] <- integer(24)
+configs['onehot'] <- integer(23)
+configs
+configs[22]
+configs[22,]
+configs[22,'onehot']
+configs[22,'onehot'] <- 1
+configs[23,'onehot'] <- 1
+configs
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 0#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
 #
 X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
 X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
 y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
 y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
 #
-X_train <- X_train[1:939,]
-rbm <- newDArch(numVisible=6, numHidden=100, ff= F)
-rbm <- RBM(numVisible=6, numHidden=100, ff= F)
-darch
-rbm
-RBM
-darch.rbm
-sessioninfo()
-sessionInfo()
-darch ← newDArch(c(2,4,1),batchSize = 2,genWeightFunc #
-       = generateWeights)
-darch <- newDArch(c(2,4,1),batchSize = 2,genWeightFunc
-= generateWeights)
-darch <- rbm(c(2,4,1),batchSize = 2,genWeightFunc = generateWeights)
-rbm <- RBM(numVisible=6, numHidden=100, ff= F)
-install.package("deepr")
-package.install("deepr")
-?darch
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 0#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+configs[-c(25, 4, 6, 19), ]
+configs <- configs[-c(25, 4, 6, 19), ]
+configs
+rownames(configs) <- NULL
+configs
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 1#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+nn.predict(nn, X_test)
+nn
+nn.predict(nn, X_train)
+nn.predict(nn, X_test)
+dim(transformed_test)
+dim(transformed_test)
+nn.predict(nn, transformed_test)
+y_test[1,]
+y_test[2,]
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 100#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+onehot <- 0
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 0#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+nn.predict(nn, transformed_test)
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, onehot=onehot))#
+configs#
+score
+nn.predict(nn, transformed_test)
+prediction <- nn.predict(nn, transformed_test)
+prediction[1,]
+max(prediction[1,])
+which.is.max(predictions[1,])
+max.col(predictions[1,])
+max.col(prediction[1,])
+max.row(prediction[1,])
+which.max(prediction[1,])
+prediction[1,]
+real_prepdictons <- matrix(0L, ncol=dim(prediction)[0], nrow=dim(prediction)[1])
+real_prepdictons <- matrix(0L, ncol=dim(prediction)[2], nrow=dim(prediction)[1])
+dim(real_prepdictons)
+dim(prediction)
+real_predictions
+real_prepdictons
+prediction[1,]
+which.max(prediction[1,])
+pred <- nn.predict(nn, transformed_test)#
+pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])#
+for(i in 1:dim(pred)[1]){#
+	max_row <- which.max(pred[i,])#
+	pred_norm[i,max_row] <- 1#
+}
+pred_norm
+pred
+y_test
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,] == which.max(y_test[i,]))){#
+		score_norm <- score_nom +1#
+	}#
+}
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,] == which.max(y_test[i,]))){#
+		score_norm <- score_norm +1#
+	}#
+}
+score_nom
+score_norm
+score_norm <- score_norm/dim(y_test)[1]
+score_norm
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]
+score_norm
+which.max(c(0,0,0,0,0))
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(c(0,0,0,0,0)) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]
+score_norm
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(c(1))){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]
+score_norm
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]#
+score_norm
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]#
+score_norm
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 10#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.01#
+learningrate_scale_rbm <- 1#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]+1] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+#
+pred <- nn.predict(nn, transformed_test)#
+pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])#
+for(i in 1:dim(pred)[1]){#
+	max_row <- which.max(pred[i,])#
+	pred_norm[i,max_row] <- 1#
+}#
+#
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]#
+score_norm#
+#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, score_norm = score_norm, onehot=onehot))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 20#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 0.9#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]+1] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+#
+pred <- nn.predict(nn, transformed_test)#
+pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])#
+for(i in 1:dim(pred)[1]){#
+	max_row <- which.max(pred[i,])#
+	pred_norm[i,max_row] <- 1#
+}#
+#
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]#
+score_norm#
+#
+configs = rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, score_norm = score_norm, onehot=onehot))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 20#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 0.9#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]+1] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+#
+pred <- nn.predict(nn, transformed_test)#
+pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])#
+for(i in 1:dim(pred)[1]){#
+	max_row <- which.max(pred[i,])#
+	pred_norm[i,max_row] <- 1#
+}#
+#
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]#
+score_norm#
+#
+configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, score_norm = score_norm, onehot=onehot))#
+configs#
+score
+dim(configs)
+configs['score_norm'] <- integer(37)
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), score=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 20#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 0.9#
+cd <- 10#
+#
+hidden_nn <- c(10,10)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]+1] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+#
+pred <- nn.predict(nn, transformed_test)#
+pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])#
+for(i in 1:dim(pred)[1]){#
+	max_row <- which.max(pred[i,])#
+	pred_norm[i,max_row] <- 1#
+}#
+#
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]#
+score_norm#
+#
+configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, score_norm = score_norm, onehot=onehot))#
+configs#
+score
+library(deepnet)#
+#
+# run this only once#
+# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), onehot=integer(), score=numeric(), score_norm=numeric())#
+#
+onehot <- 1#
+#
+hidden_rbm <- 1000#
+numepochs_rbm <- 20#
+batchsize_rbm <- 90#
+learningrate_rbm <- 0.001#
+learningrate_scale_rbm <- 0.9#
+cd <- 10#
+#
+hidden_nn <- c(10,5)#
+learningrate_nn <- 0.001#
+learningrate_scale_nn <- 0.9#
+numepochs_nn <- 10#
+batchsize_nn <- 90#
+#
+X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)#
+X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)#
+y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)#
+y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)#
+#
+X_train <- X_train[1:939,]#
+X_test <- X_test[1:313,]#
+#
+# trying one hot encoding#
+onehot_test <- matrix(0L, nrow=dim(y_test)[1], ncol=max(y_test)+1)#
+counter <- 1#
+for(y in 1:dim(y_test)[1]){#
+	onehot_test[counter,y_test[y,]] <- 1#
+	counter <- counter+1#
+}#
+# trying one hot encoding#
+onehot_train <- matrix(0L, nrow=dim(y_train)[1], ncol=max(y_train)+1)#
+counter <- 1#
+for(y in 1:dim(y_train)[1]){#
+	onehot_train[counter, y_train[y,]+1] <- 1#
+	counter <- counter+1#
+}#
+X_train <- as.matrix(X_train)#
+X_test <- as.matrix(X_test)#
+y_train <- as.matrix(y_train)#
+y_test <- as.matrix(y_test)#
+#
+if(onehot){#
+	y_test <- onehot_test#
+	y_train <- onehot_train#
+}#
+#
+rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)#
+#
+transformed_train <- rbm.up(rbm, X_train)#
+transformed_test <- rbm.up(rbm, X_test)#
+#
+nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)#
+#
+score <- 0#
+score <- nn.test(nn, transformed_test, y_test, t = 0.9)#
+#
+pred <- nn.predict(nn, transformed_test)#
+pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])#
+for(i in 1:dim(pred)[1]){#
+	max_row <- which.max(pred[i,])#
+	pred_norm[i,max_row] <- 1#
+}#
+#
+score_norm <- 0#
+for(i in 1:dim(pred_norm)[1]){#
+	if(which.max(pred_norm[i,]) == which.max(y_test[i,])){#
+		score_norm <- score_norm +1#
+	}#
+}#
+score_norm <- score_norm/dim(y_test)[1]#
+score_norm#
+#
+configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, score_norm = score_norm, onehot=onehot))#
+configs#
+score
