@@ -1,4 +1,5 @@
 dataset.csv
 **/*.Rhistory
-**/*.history
+**/*.Rhistory
+**/*Rapp.history
 **/*(Autosaved).R
