@@ -1,3 +1,4 @@
 dataset.csv
 **/*.Rhistory
+**/*.history
 **/*(Autosaved).R
