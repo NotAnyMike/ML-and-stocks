@@ -1,22 +1,25 @@
-library(deepnet)
-
 # run this only once
-# configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=integer(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), onehot=integer(), score=numeric(), score_norm=numeric())
-
+if(exists("configs") == F){
+	library(deepnet)
+	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), onehot=integer(), err_score=numeric(), err_score_norm=numeric())
+	predict_list <- list()
+	predict_norm <- list()
+	nn_list <- list()
+}
 onehot <- 1
 
-hidden_rbm <- 1000
-numepochs_rbm <- 20
-batchsize_rbm <- 90
-learningrate_rbm <- 0.001
+hidden_rbm <- 100
+numepochs_rbm <- 10
+batchsize_rbm <- 100
+learningrate_rbm <- 0.01
 learningrate_scale_rbm <- 0.9
 cd <- 10
 
-hidden_nn <- c(10,5)
-learningrate_nn <- 0.001
+hidden_nn <- c(10)
+learningrate_nn <- 0.01
 learningrate_scale_nn <- 0.9
 numepochs_nn <- 10
-batchsize_nn <- 90
+batchsize_nn <- 100
 
 X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
 X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)
@@ -60,7 +63,7 @@ transformed_test <- rbm.up(rbm, X_test)
 nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
 
 score <- 0
-score <- nn.test(nn, transformed_test, y_test, t = 0.9)
+score <- nn.test(nn, transformed_test, y_test, t = 0.5)
 
 pred <- nn.predict(nn, transformed_test)
 pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])
@@ -75,10 +78,11 @@ for(i in 1:dim(pred_norm)[1]){
 		score_norm <- score_norm +1
 	}
 }
-score_norm <- score_norm/dim(y_test)[1]
-score_norm
+score_norm <- 1- score_norm/dim(pred)[1]
 
-configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=hidden_nn, lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, score=score, score_norm = score_norm, onehot=onehot))
+configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=paste(hidden_nn,collapse=" "), lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, onehot=onehot, err_score=score, err_score_norm = score_norm))
+predict_list[[dim(configs)[1]]] <- pred
+predict_norm[[dim(configs)[1]]] <- pred_norm
+nn_list[[dim(configs)[1]]] <- nn
+
 configs
-score
-
