@@ -10,13 +10,13 @@ if(exists("configs") == F){
 onehot <- 1
 epochs_rbm <- 10
 batch_rbm <- 100
-ln_rate_rbm <- .01
+ln_rate_rbm <- .1
 ln_scale_rbm <- .98
-cd_rbm <- 2
-layers <- c(6,10,5)
+cd_rbm <- 10
+layers <- c(5,100,10,5)
 batch <- 100
-ln_rate_bp <- 1
-ln_scale_bp <- .99
+ln_rate_bp <- .1
+ln_scale_bp <- .98
 epochs_ft <- 20
 
 # Load csv
@@ -60,31 +60,31 @@ if(onehot){
 #trainLabelsSmall <- trainLabels[chosenRowsTrain,]
   
 darch  <- darch(X_train, y_train,
-  rbm.numEpochs = 10,
+  rbm.numEpochs = epochs_rbm,
   rbm.consecutive = F, # each RBM is trained one epoch at a time
-  rbm.batchSize = 100,
+  rbm.batchSize = batch_rbm,
   rbm.lastLayer = -1, # don't train output layer
   rbm.allData = T, # use bootstrap validation data as well for training
   rbm.errorFunction = rmseError,
   rbm.initialMomentum = .5,
   rbm.finalMomentum = .7,
-  rbm.learnRate = .01,
-  rbm.learnRateScale = .98,
+  rbm.learnRate = ln_rate_rbm,
+  rbm.learnRateScale = ln_scale_rbm,
   rbm.momentumRampLength = .8,
-  rbm.numCD = 2,
+  rbm.numCD = cd_rbm,
   rbm.unitFunction = sigmoidUnitRbm,
   rbm.weightDecay = .001,
-  layers = c(6,10,5),
-  darch.batchSize = 100,
+  layers = layers,
+  darch.batchSize = batch,
   darch.dither = T,
   darch.initialMomentum = .4,
   darch.finalMomentum = .9,
   darch.momentumRampLength = .75,
-  bp.learnRate = 1,
-  bp.learnRateScale = .99,
+  bp.learnRate = ln_rate_bp,
+  bp.learnRateScale = ln_scale_bp,
   darch.unitFunction = c(tanhUnit, softmaxUnit),
   bootstrap = T,
-  darch.numEpochs = 20,
+  darch.numEpochs = epochs_ft,
   gputools = T, # try to use gputools
   gputools.deviceId = 0,
   xValid = X_test,
