@@ -2,3 +2,4 @@ dataset.csv
 *.history
 *.swp
 *(Autosaved).R
+/.ipynb_checkpoints/
