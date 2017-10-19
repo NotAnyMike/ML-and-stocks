@@ -2,7 +2,7 @@
 
 ## RBM + ANN in `R` using `deepnet` package
 
-these are the values of the different configurations tested here and the score of the prediction (the error in prediction):
+These are the values of the different configurations tested here and the score of the prediction (the error in prediction):
 
 ![configs][configs]
 
@@ -10,7 +10,7 @@ the documentation of the package can be found [here](https://cran.r-project.org/
 
 ## Deep Belief Nets using `darch` package
 
-There are the different hyperparameters used and the classification error:
+These are the different hyperparameters used and the classification error:
 
 ![configs_darch][configs_darch]
 
