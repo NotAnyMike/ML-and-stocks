@@ -6,7 +6,7 @@ These are the values of the different configurations tested here and the score o
 
 ![configs][configs]
 
-The main problem here is that the model predicts (in the best case) the mode. The documentation of the package can be found [here](https://cran.r-project.org/web/packages/deepnet/deepnet.pdf), see the section on `rbm.train` the attribute `visible_type`, they talk about the sigmoid function when they should be talking about the type of the variables, which is set `binary` by default, and no other value works here.
+The main problem here is that the model predicts (in the best case) the mode, the same result is obtained using the darch library and with the same `A` stock. The documentation of the package can be found [here](https://cran.r-project.org/web/packages/deepnet/deepnet.pdf), see the section on `rbm.train` the attribute `visible_type`, they talk about the sigmoid function when they should be talking about the type of the variables, which is set `binary` by default, and no other value works here.
 
 Changing the stock used in the last results, the clasification errors are the following:
 
@@ -20,7 +20,7 @@ These are the different hyperparameters used and the classification error:
 
 You can see [here](https://cran.r-project.org/web/packages/darch/darch.pdf) their documentation, and [here](https://github.com/maddin79/darch/blob/master/examples/example.mnist.R) they clearly use the library to model continous input. The problem with this library is that accessing only the rmb class is not possible (at least I coudln't find a way to do it)
 
-The model allows a more complex predictions than the model using the `deepnet` library (i.e. the prediction depends on the value and not only predicts the mode), using the stock `AAL` the results are the following
+Using the input from the `A` stock have the same behaviour of the model using the `deepnet` library (i.e. always predicts the mode) but it allows a more complex predictions using a different stock (the `AAL` stock), changing the stock makes the prediction depend on the value and not only predicts the mode, using the stock `AAL` the results are the following
 
 ![configs using another stock][configs_darch_AAL_1]
 

@@ -12,10 +12,10 @@ onehot <- 1
 
 # Load csv
 
-X_train <- read.csv(file="../csv/X_train_AAL.csv", header=T, sep=",", row.names=1)
-X_test <- read.csv(file="../csv/X_test_AAL.csv", header=T, sep=",", row.names=1)
-y_train_org <- read.csv(file="../csv/y_train_AAL.csv", header=T, sep=",", row.names=1)
-y_test_org <- read.csv(file="../csv/y_test_AAL.csv", header=T, sep=",", row.names=1)
+X_train <- read.csv(file="../csv/X_train_A.csv", header=T, sep=",", row.names=1)
+X_test <- read.csv(file="../csv/X_test_A.csv", header=T, sep=",", row.names=1)
+y_train_org <- read.csv(file="../csv/y_train_A.csv", header=T, sep=",", row.names=1)
+y_test_org <- read.csv(file="../csv/y_test_A.csv", header=T, sep=",", row.names=1)
 
 X_train <- X_train[2:nrow(X_train),]
 X_test <- X_test[2:nrow(X_test),]
@@ -49,11 +49,11 @@ epochs_rbm <- 10
 batch_rbm <- 100
 ln_rate_rbm <- .01
 ln_scale_rbm <- 1
-cd_rbm <- 50
+cd_rbm <- 10
 layers <- c(ncol(X_train),100,5)
-units <- c(rectifiedLinearUnit, softmaxUnit)
-batch <- 100
-ln_rate_bp <- .1
+units <- c(tanhUnit, softmaxUnit)
+batch <- 200
+ln_rate_bp <- .01
 ln_scale_bp <- 1
 epochs_ft <- 10
   
