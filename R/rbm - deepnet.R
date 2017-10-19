@@ -8,18 +8,18 @@ if(exists("configs") == F){
 }
 onehot <- 1
 
-hidden_rbm <- 1000
+hidden_rbm <- 100
 numepochs_rbm <- 10
-batchsize_rbm <- 500
-learningrate_rbm <- 0.001
-learningrate_scale_rbm <- 0.5
-cd <- 10
+batchsize_rbm <- 100
+learningrate_rbm <- 0.01
+learningrate_scale_rbm <- 1
+cd <- 3
 
 hidden_nn <- c(100)
-learningrate_nn <- 0.001
-learningrate_scale_nn <- 0.5
+learningrate_nn <- 0.01
+learningrate_scale_nn <- 1
 numepochs_nn <- 10
-batchsize_nn <- 500
+batchsize_nn <- 100
 
 X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
 X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)

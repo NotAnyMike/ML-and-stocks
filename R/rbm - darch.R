@@ -8,15 +8,16 @@ if(exists("configs") == F){
 }
 
 onehot <- 1
-epochs_rbm <- 10
-batch_rbm <- 100
-ln_rate_rbm <- .1
-ln_scale_rbm <- .98
+epochs_rbm <- 20
+batch_rbm <- 200
+ln_rate_rbm <- .01
+ln_scale_rbm <- 1
 cd_rbm <- 10
-layers <- c(5,100,10,5)
+layers <- c(5,100,5)
+units <- c(tanhUnit, softmaxUnit)
 batch <- 100
 ln_rate_bp <- .1
-ln_scale_bp <- .98
+ln_scale_bp <- 1
 epochs_ft <- 20
 
 # Load csv
@@ -82,7 +83,7 @@ darch  <- darch(X_train, y_train,
   darch.momentumRampLength = .75,
   bp.learnRate = ln_rate_bp,
   bp.learnRateScale = ln_scale_bp,
-  darch.unitFunction = c(tanhUnit, softmaxUnit),
+  darch.unitFunction = units,
   bootstrap = T,
   darch.numEpochs = epochs_ft,
   gputools = T, # try to use gputools
