@@ -16,24 +16,26 @@ onehot <- 1
 hidden_rbm <- 100
 numepochs_rbm <- 10
 batchsize_rbm <- 100
-learningrate_rbm <- 0.01
+learningrate_rbm <- 0.1
 learningrate_scale_rbm <- 1
 cd <- 3
 
 #Hyperparameters for the neural net
 hidden_nn <- c(100)
-learningrate_nn <- 0.01
+learningrate_nn <- 0.1
 learningrate_scale_nn <- 1
 numepochs_nn <- 10
 batchsize_nn <- 100
 
 #Loading the files
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)
-y_train_org <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
-y_test_org <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-X_train <- X_train[1:939,]
-X_test <- X_test[1:313,]
+X_train <- read.csv(file="../csv/X_train_AAL.csv", header=T, sep=",", row.names=1)
+X_test <- read.csv(file="../csv/X_test_AAL.csv", header=T, sep=",", row.names=1)
+y_train_org <- read.csv(file="../csv/y_train_AAL.csv", header=T, sep=",", row.names=1)
+y_test_org <- read.csv(file="../csv/y_test_AAL.csv", header=T, sep=",", row.names=1)
+
+#Removing the first row because it has no return
+X_train <- X_train[2:nrow(X_train),]
+X_test <- X_test[2:nrow(X_test),]
 
 #Onehot vector encoding
 onehot_test <- matrix(0L, nrow=dim(y_test_org)[1], ncol=max(y_test_org)+1)
@@ -95,6 +97,9 @@ configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = nume
 predict_list[[dim(configs)[1]]] <- pred
 predict_norm_list[[dim(configs)[1]]] <- pred_norm
 nn_list[[dim(configs)[1]]] <- nn
+
+# Histogram of y_train
+sort(table(y_train_org),decreasing=TRUE)
 
 #Printing information
 configs

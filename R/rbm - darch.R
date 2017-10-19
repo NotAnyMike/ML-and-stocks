@@ -7,28 +7,18 @@ if(exists("configs") == F){
 	nn_list <- list()
 }
 
+#1 = work with onehot vector encoding for the lables
 onehot <- 1
-epochs_rbm <- 20
-batch_rbm <- 200
-ln_rate_rbm <- .01
-ln_scale_rbm <- 1
-cd_rbm <- 10
-layers <- c(5,100,5)
-units <- c(tanhUnit, softmaxUnit)
-batch <- 100
-ln_rate_bp <- .1
-ln_scale_bp <- 1
-epochs_ft <- 20
 
 # Load csv
 
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)
-y_train_org <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
-y_test_org <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
+X_train <- read.csv(file="../csv/X_train_AAL.csv", header=T, sep=",", row.names=1)
+X_test <- read.csv(file="../csv/X_test_AAL.csv", header=T, sep=",", row.names=1)
+y_train_org <- read.csv(file="../csv/y_train_AAL.csv", header=T, sep=",", row.names=1)
+y_test_org <- read.csv(file="../csv/y_test_AAL.csv", header=T, sep=",", row.names=1)
 
-X_train <- X_train[1:939,]
-X_test <- X_test[1:313,]
+X_train <- X_train[2:nrow(X_train),]
+X_test <- X_test[2:nrow(X_test),]
 
 # trying one hot encoding
 onehot_test <- matrix(0L, nrow=dim(y_test_org)[1], ncol=max(y_test_org)+1)
@@ -54,6 +44,18 @@ if(onehot){
 	y_test <- onehot_test
 	y_train <- onehot_train
 }
+
+epochs_rbm <- 10
+batch_rbm <- 100
+ln_rate_rbm <- .001
+ln_scale_rbm <- 1
+cd_rbm <- 50
+layers <- c(ncol(X_train),100,5)
+units <- c(rectifiedLinearUnit, softmaxUnit)
+batch <- 100
+ln_rate_bp <- .1
+ln_scale_bp <- 1
+epochs_ft <- 10
   
 # only take 1000 samples, otherwise training takes increasingly long
 #chosenRowsTrain <- sample(1:nrow(trainData), size=nrow(X_train))
