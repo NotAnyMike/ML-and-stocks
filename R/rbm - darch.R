@@ -47,7 +47,7 @@ if(onehot){
 
 epochs_rbm <- 10
 batch_rbm <- 100
-ln_rate_rbm <- .001
+ln_rate_rbm <- .01
 ln_scale_rbm <- 1
 cd_rbm <- 50
 layers <- c(ncol(X_train),100,5)
