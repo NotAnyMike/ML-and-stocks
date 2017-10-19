@@ -10,7 +10,7 @@ The main problem here is that the model predicts (in the best case) the mode. Th
 
 Changing the stock used in the last results, the clasification errors are the following:
 
-![deepnet_AAL][deepnet and AAL stock]
+![deepnet and AAL stock][deepnet_AAL]
 
 ## Deep Belief Nets using `darch` package
 
@@ -22,11 +22,11 @@ You can see [here](https://cran.r-project.org/web/packages/darch/darch.pdf) thei
 
 The model allows a more complex predictions than the model using the `deepnet` library (i.e. the prediction depends on the value and not only predicts the mode), using the stock `AAL` the results are the following
 
-![configs_darch_AAL_1][configs using another stock]
+![configs using another stock][configs_darch_AAL_1]
 
 Using the ReLU activation function does not improve significantly the model
 
-![relu][using relu]
+![using relu][relu]
 
 [configs_darch]: img/2.png "different hyperparameters for dbn using darch library"
 [configs]: img/1.png "different configs"
