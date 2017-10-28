@@ -12,13 +12,6 @@ provideMNIST(dataFolder, downloadMNIST)
 load(paste0(dataFolder, "train.RData")) # trainData, trainLabels
 load(paste0(dataFolder, "test.RData")) # testData, testLabels
 
-# Load csv
-
-X_train <- read.csv(file="../X_train.csv", header=T, sep=",", row.names=1)
-X_test <- read.csv(file="../X_test.csv", header=T, sep=",", row.names=1)
-y_train <- read.csv(file="../y_train.csv", header=T, sep=",", row.names=1)
-y_test <- read.csv(file="../y_test.csv", header=T, sep=",", row.names=1)
-  
 # only take 1000 samples, otherwise training takes increasingly long
 chosenRowsTrain <- sample(1:nrow(trainData), size=1000)
 trainDataSmall <- trainData[chosenRowsTrain,]
