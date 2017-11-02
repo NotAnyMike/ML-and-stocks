@@ -3,7 +3,7 @@ if(exists("configs") == F){
 	library(deepnet)
 	
 	#Creating list to store the differents outputs and information
-	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), onehot=integer(), err_score=numeric(), err_score_norm=numeric())
+	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), err_score=numeric(), err_score_norm=numeric())
 	predict_list <- list()
 	predict_norm_list <- list()
 	nn_list <- list()
@@ -28,7 +28,12 @@ batchsize_nn <- 100
 df <- read.csv(file="../csv/A_binary.csv", header=T, sep=",", row.names=1, colClasses=c("numeric", "character"))
 
 #Creating X
-
+X <- matrix(0L, nrow=dim(df)[1], ncol=nchar(df[1,"All_values"]))
+for(n in 1:nrow(df)){
+	for(i in 1:nchar(df[1,"All_values"])){
+		X[n,i] <- strtoi(substr(df[n, "All_values"],i,i))
+	}
+}
 
 #Onehot vector encoding
 y <- matrix(0L, nrow=dim(df)[1], ncol=max(df['Return_to_pred'])+1)
@@ -45,8 +50,8 @@ set.seed(123)
 train_ind <- sample(seq_len(nrow(df)), size = smp_size)
 
 #Coverting dataframes to matrices
-X_train <- as.matrix(df[train_ind,'All_values'])
-X_test <- as.matrix(df[-train_ind,'All_values'])
+X_train <- as.matrix(X[train_ind,])
+X_test <- as.matrix(X[-train_ind,])
 y_train <- as.matrix(y[train_ind,])
 y_test <- as.matrix(y[-train_ind,])
 
@@ -80,13 +85,13 @@ for(i in 1:dim(pred_norm)[1]){
 score_norm <- 1- score_norm/dim(pred)[1]
 
 #Saving data into lists
-configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=paste(hidden_nn,collapse=" "), lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, onehot=onehot, err_score=score, err_score_norm = score_norm))
+configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=paste(hidden_nn,collapse=" "), lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, err_score=score, err_score_norm = score_norm))
 predict_list[[dim(configs)[1]]] <- pred
 predict_norm_list[[dim(configs)[1]]] <- pred_norm
 nn_list[[dim(configs)[1]]] <- nn
 
 # Histogram of y_train
-sort(table(y_train_org),decreasing=TRUE)
+sort(table(df[,'Return_to_pred']),decreasing=TRUE)
 
 #Printing information
 configs
