@@ -26,38 +26,29 @@ batchsize_nn <- 100
 
 #Loading the files
 df <- read.csv(file="../csv/A_binary.csv", header=T, sep=",", row.names=1, colClasses=c("numeric", "character"))
-X_train <- read.csv(file="../csv/X_train_AAL.csv", header=T, sep=",", row.names=1)
-X_test <- read.csv(file="../csv/X_test_AAL.csv", header=T, sep=",", row.names=1)
-y_train_org <- read.csv(file="../csv/y_train_AAL.csv", header=T, sep=",", row.names=1)
-y_test_org <- read.csv(file="../csv/y_test_AAL.csv", header=T, sep=",", row.names=1)
 
-#Removing the first row because it has no return
-X_train <- X_train[2:nrow(X_train),]
-X_test <- X_test[2:nrow(X_test),]
+#Creating X
+
 
 #Onehot vector encoding
-onehot_test <- matrix(0L, nrow=dim(y_test_org)[1], ncol=max(y_test_org)+1)
+y <- matrix(0L, nrow=dim(df)[1], ncol=max(df['Return_to_pred'])+1)
 counter <- 1
-for(y in 1:dim(y_test_org)[1]){
-	onehot_test[counter,y_test_org[y,]+1] <- 1
+for(row in 1:dim(df)[1]){
+	y[counter, (df[row,'Return_to_pred']+1)] <- 1
 	counter <- counter+1
 }
-onehot_train <- matrix(0L, nrow=dim(y_train_org)[1], ncol=max(y_train_org)+1)
-counter <- 1
-for(y in 1:dim(y_train_org)[1]){
-	onehot_train[counter, y_train_org[y,]+1] <- 1
-	counter <- counter+1
-}
+
+#Train test split
+smp_size = floor(0.75*nrow(df))
+
+set.seed(123)
+train_ind <- sample(seq_len(nrow(df)), size = smp_size)
 
 #Coverting dataframes to matrices
-X_train <- as.matrix(X_train)
-X_test <- as.matrix(X_test)
-y_train <- as.matrix(y_train_org)
-y_test <- as.matrix(y_test_org)
-
-#Asigning onehot vecto labels to the variables used in the model
-y_test <- onehot_test
-y_train <- onehot_train
+X_train <- as.matrix(df[train_ind,'All_values'])
+X_test <- as.matrix(df[-train_ind,'All_values'])
+y_train <- as.matrix(y[train_ind,])
+y_test <- as.matrix(y[-train_ind,])
 
 #Training the rbm
 rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
