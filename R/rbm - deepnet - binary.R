@@ -13,13 +13,13 @@ if(exists("configs") == F){
 hidden_rbm <- 100
 numepochs_rbm <- 10
 batchsize_rbm <- 100
-learningrate_rbm <- 0.1
+learningrate_rbm <- 0.001
 learningrate_scale_rbm <- 1
-cd <- 3
+cd <- 10
 
 #Hyperparameters for the neural net
-hidden_nn <- c(100)
-learningrate_nn <- 0.1
+hidden_nn <- c(100,100)
+learningrate_nn <- 0.001
 learningrate_scale_nn <- 1
 numepochs_nn <- 10
 batchsize_nn <- 100
@@ -63,7 +63,7 @@ transformed_train <- rbm.up(rbm, X_train)
 transformed_test <- rbm.up(rbm, X_test)
 
 #Training the neural net
-nn = nn.train(x=transformed_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
+nn = nn.train(x=X_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
 
 
 #Calculating the score normalized
