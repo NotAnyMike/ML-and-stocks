@@ -14,16 +14,16 @@ if(exists("configs") == F){
 hidden_rbm <- 100
 numepochs_rbm <- 10
 batchsize_rbm <- 100
-learningrate_rbm <- 0.01
+learningrate_rbm <- 0.1
 learningrate_scale_rbm <- 1
-cd <- 10
+cd <- 20
 
 #Hyperparameters for the neural net
-hidden_nn <- c(200,50)
+hidden_nn <- c(50,50)
 learningrate_nn <- 0.01
-learningrate_scale_nn <- 0.8
-numepochs_nn <- 10
-batchsize_nn <- 500
+learningrate_scale_nn <- 1
+numepochs_nn <- 30
+batchsize_nn <- 100
 
 #################################
 dataFolder = "mnist/"
@@ -44,26 +44,41 @@ trainLabelsSmall <- trainLabels[chosenRowsTrain,]
 #################################
 trainDataSmall_norm <- matrix(0L, nrow=nrow(trainDataSmall), ncol=ncol(trainDataSmall))
 for(i in 1:nrow(trainDataSmall)){
-	max_row <- which.max(trainDataSmall[i,])
-	pred_norm[i,max_row] <- 1
+	for(j in 1:ncol(trainDataSmall)){
+		trainDataSmall_norm[i,j] <- 0
+		if(trainDataSmall[i,j] > 0.5){
+			trainDataSmall_norm[i,j] <- 1
+		}
+		
+	}
+}
+testData_norm <- matrix(0L, nrow=nrow(testData), ncol=ncol(testData))
+for(i in 1:nrow(testData)){
+	for(j in 1:ncol(testData)){
+		testData_norm[i,j] <- 0
+		if(testData[i,j] > 0.5){
+			testData_norm[i,j] <- 1
+		}
+		
+	}
 }
 
 #Training the rbm
-rbm <- rbm.train(x=trainDataSmall, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
+rbm <- rbm.train(x=trainDataSmall_norm, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
 
 #Transforming input values
 #transformed_train <- rbm.up(rbm, X_train)
 #transformed_test <- rbm.up(rbm, X_test)
 
 #Training the neural net
-nn = nn.train(x= trainDataSmall, y= trainLabelsSmall, initW = rbm$W, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
+nn = nn.train(x= trainDataSmall_norm, y= trainLabelsSmall, initW = rbm$W, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
 
 
 #Calculating the score normalized
 score <- 0
-score <- nn.test(nn, testData, testLabels, t = 0.5)
+score <- nn.test(nn, testData_norm, testLabels, t = 0.5)
 
-pred <- nn.predict(nn, testData)
+pred <- nn.predict(nn, testData_norm)
 pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])
 for(i in 1:dim(pred)[1]){
 	max_row <- which.max(pred[i,])
