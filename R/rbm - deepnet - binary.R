@@ -13,13 +13,13 @@ if(exists("configs") == F){
 hidden_rbm <- 100
 numepochs_rbm <- 10
 batchsize_rbm <- 100
-learningrate_rbm <- 0.001
+learningrate_rbm <- 0.01
 learningrate_scale_rbm <- 1
 cd <- 10
 
 #Hyperparameters for the neural net
-hidden_nn <- c(100,100)
-learningrate_nn <- 0.001
+hidden_nn <- c(200,50)
+learningrate_nn <- 0.01
 learningrate_scale_nn <- 1
 numepochs_nn <- 10
 batchsize_nn <- 100
@@ -59,18 +59,18 @@ y_test <- as.matrix(y[-train_ind,])
 rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
 
 #Transforming input values
-transformed_train <- rbm.up(rbm, X_train)
-transformed_test <- rbm.up(rbm, X_test)
+#transformed_train <- rbm.up(rbm, X_train)
+#transformed_test <- rbm.up(rbm, X_test)
 
 #Training the neural net
-nn = nn.train(x=X_train, y_train, initW = NULL, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
+nn = nn.train(x=X_train, y=y_train, initW = rbm$W, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
 
 
 #Calculating the score normalized
 score <- 0
-score <- nn.test(nn, transformed_test, y_test, t = 0.5)
+score <- nn.test(nn, X_test, y_test, t = 0.5)
 
-pred <- nn.predict(nn, transformed_test)
+pred <- nn.predict(nn, X_test)
 pred_norm <- matrix(0L, nrow=dim(pred)[1], ncol=dim(pred)[2])
 for(i in 1:dim(pred)[1]){
 	max_row <- which.max(pred[i,])
