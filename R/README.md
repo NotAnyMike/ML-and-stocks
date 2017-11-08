@@ -20,7 +20,7 @@ The input for this model is different of the rest. Instead of trying to use the 
 * `01` the candlestick was green (close $>$ open)
 * `10` the candlestick was red (close $< $ open)
 
-this inputs contained some numeber of lags
+this inputs contained some number of lags
 
 ### Results
 Running a RBM and then using the weights learned from that generative model to initilize the weights of a Shallow Neural Net the results are the following
