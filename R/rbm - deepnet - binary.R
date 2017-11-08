@@ -3,7 +3,7 @@ if(exists("configs") == F){
 	library(deepnet)
 	
 	#Creating list to store the differents outputs and information
-	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), using_rbm=bool(), err_score=numeric(), err_score_norm=numeric())
+	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), using_rbm=logical(), err_score=numeric(), err_score_norm=numeric())
 	predict_list <- list()
 	predict_norm_list <- list()
 	nn_list <- list()
@@ -67,7 +67,7 @@ rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchs
 
 #Getting initW
 if(use_rbm){
-	initW <- rmb$W
+	initW <- rbm$W
 }else{
 	initW <- NULL
 }
