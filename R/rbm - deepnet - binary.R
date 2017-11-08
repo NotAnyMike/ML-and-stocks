@@ -13,19 +13,19 @@ if(exists("configs") == F){
 use_rbm <- T
 
 #Hyperparameters for the rbm
-hidden_rbm <- 100
-numepochs_rbm <- 10
+hidden_rbm <- 50
+numepochs_rbm <- 200
 batchsize_rbm <- 100
-learningrate_rbm <- 0.01
+learningrate_rbm <- 0.1
 learningrate_scale_rbm <- 1
 cd <- 10
 
 #Hyperparameters for the neural net
 hidden_nn <- c(50,5)
-learningrate_nn <- 0.01
-learningrate_scale_nn <- 1
-numepochs_nn <- 10
-batchsize_nn <- 100
+learningrate_nn <- 0.1
+learningrate_scale_nn <- 0.5
+numepochs_nn <- 5
+batchsize_nn <- 200
 
 #Loading the files
 df <- read.csv(file="../csv/A_binary.csv", header=T, sep=",", row.names=1, colClasses=c("numeric", "character"))

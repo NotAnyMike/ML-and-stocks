@@ -12,6 +12,21 @@ Changing the stock used in the last results, the clasification errors are the fo
 
 ![deepnet and AAL stock][deepnet_AAL]
 
+## Shallow Neural net with a weight initialization given by a RBM using `deepnet`
+
+### Important
+The input for this model is different of the rest. Instead of trying to use the average price (a continue value) as inputs (with some lags) here the inputs are the color of the candlestick, so the codifications were the following:
+* `00` there was no change
+* `01` the candlestick was green (close $>$ open)
+* `10` the candlestick was red (close $< $ open)
+
+this inputs contained some numeber of lags
+
+### Results
+Running a RBM and then using the weights learned from that generative model to initilize the weights of a Shallow Neural Net the results are the following
+
+![binary_deepnet][binary_deepnet]
+
 ## Deep Belief Nets using `darch` package
 
 These are the different hyperparameters used and the classification error:
@@ -33,3 +48,4 @@ Using the ReLU activation function does not improve significantly the model
 [configs_darch_AAL_1]: img/AAL_4_darch_tanh_pred_compl_20lags.png "Config using AAL stock"
 [relu]: img/AAL_darch_relu_pred-comp.png "Using relu activation function for the first layer"
 [deepnet_AAL]: img/AAL_3_deepnet_20lags.png "Using a different stock and the package deepnet"
+[binary_deepnet]: img/deepnet_rbm_W_init.png "Using rbm as a initialization parameter to a shallow neuralnet"
