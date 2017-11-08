@@ -3,11 +3,14 @@ if(exists("configs") == F){
 	library(deepnet)
 	
 	#Creating list to store the differents outputs and information
-	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), err_score=numeric(), err_score_norm=numeric())
+	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), using_rbm=bool(), err_score=numeric(), err_score_norm=numeric())
 	predict_list <- list()
 	predict_norm_list <- list()
 	nn_list <- list()
 }
+
+#General hyperparameters
+use_rbm <- T
 
 #Hyperparameters for the rbm
 hidden_rbm <- 100
@@ -18,7 +21,7 @@ learningrate_scale_rbm <- 1
 cd <- 10
 
 #Hyperparameters for the neural net
-hidden_nn <- c(200,50)
+hidden_nn <- c(50,5)
 learningrate_nn <- 0.01
 learningrate_scale_nn <- 1
 numepochs_nn <- 10
@@ -62,8 +65,15 @@ rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchs
 #transformed_train <- rbm.up(rbm, X_train)
 #transformed_test <- rbm.up(rbm, X_test)
 
+#Getting initW
+if(use_rbm){
+	initW <- rmb$W
+}else{
+	initW <- NULL
+}
+
 #Training the neural net
-nn = nn.train(x=X_train, y=y_train, initW = rbm$W, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
+nn = nn.train(x=X_train, y=y_train, initW = initW, initB = NULL, hidden = hidden_nn, activationfun = "sigm", learningrate = learningrate_nn, momentum = 0.5, learningrate_scale = learningrate_scale_nn, output = "sigm", numepochs = numepochs_nn, batchsize = batchsize_nn, hidden_dropout = 0, visible_dropout = 0)
 
 
 #Calculating the score normalized
@@ -85,7 +95,7 @@ for(i in 1:dim(pred_norm)[1]){
 score_norm <- 1- score_norm/dim(pred)[1]
 
 #Saving data into lists
-configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=paste(hidden_nn,collapse=" "), lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, err_score=score, err_score_norm = score_norm))
+configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=paste(hidden_nn,collapse=" "), lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, using_rbm=use_rbm, err_score=score, err_score_norm = score_norm))
 predict_list[[dim(configs)[1]]] <- pred
 predict_norm_list[[dim(configs)[1]]] <- pred_norm
 nn_list[[dim(configs)[1]]] <- nn
