@@ -27,6 +27,8 @@ Running a RBM and then using the weights learned from that generative model to i
 
 ![binary_deepnet][binary_deepnet]
 
+In order to test the consitency of the library (`deepnet`) the results here were compared to a very simple neural net of one hidden layer without any weights matrix initialization using the python library `Keras`, the results of the keras implementation was an error of $46%$, very close to the results using `deepnet` so the conclusion was the package used in R have no structual problem.(the NN in keras was only run a very few number of times).
+
 ## Deep Belief Nets using `darch` package
 
 These are the different hyperparameters used and the classification error:
