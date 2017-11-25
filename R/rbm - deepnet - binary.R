@@ -10,6 +10,8 @@ if(exists("configs") == F){
 }
 
 #General hyperparameters
+OneClassOutput <- T
+UseRandomSampling <- T
 use_rbm <- T
 
 #Hyperparameters for the rbm
@@ -28,7 +30,12 @@ numepochs_nn <- 5
 batchsize_nn <- 10
 
 #Loading the files
-df <- read.csv(file="../csv/A_binary.csv", header=T, sep=",", row.names=1, colClasses=c("numeric", "character"))
+if(OneClassOutput){
+	file <- "../csv/A_binary_1-class-output.csv"
+}else{
+	file <- "../csv/A_binary.csv"
+}
+df <- read.csv(file=file, header=T, sep=",", row.names=1, colClasses=c("numeric", "character"))
 
 #Creating X
 X <- matrix(0L, nrow=dim(df)[1], ncol=nchar(df[1,"All_values"]))
@@ -39,11 +46,15 @@ for(n in 1:nrow(df)){
 }
 
 #Onehot vector encoding
-y <- matrix(0L, nrow=dim(df)[1], ncol=max(df['Return_to_pred'])+1)
 counter <- 1
-for(row in 1:dim(df)[1]){
-	y[counter, (df[row,'Return_to_pred']+1)] <- 1
-	counter <- counter+1
+if(OneClassOutput){
+	y <- df$Return_binary
+}else{
+	y <- matrix(0L, nrow=dim(df)[1], ncol=max(df['Return_to_pred'])+1)
+	for(row in 1:dim(df)[1]){
+		y[counter, (df[row,'Return_to_pred']+1)] <- 1
+		counter <- counter+1
+	}
 }
 
 #Train test split
@@ -55,13 +66,15 @@ train_ind <- sample(seq_len(nrow(df)), size = smp_size)
 #Coverting dataframes to matrices
 X_train <- as.matrix(X[train_ind,])
 X_test <- as.matrix(X[-train_ind,])
-y_train <- as.matrix(y[train_ind,])
-y_test <- as.matrix(y[-train_ind,])
+y_train <- as.matrix(y[train_ind])
+y_test <- as.matrix(y[-train_ind])
 
-X_train <- as.matrix(X[1:smp_size,])
-X_test <- as.matrix(X[(smp_size+1):nrow(X),])
-y_train <- as.matrix(y[1:smp_size,])
-y_test <- as.matrix(y[(smp_size+1):nrow(X),])
+if(UseRandomSampling == F){
+	X_train <- as.matrix(X[1:smp_size,])
+	X_test <- as.matrix(X[(smp_size+1):nrow(X),])
+	y_train <- as.matrix(y[1:smp_size])
+	y_test <- as.matrix(y[(smp_size+1):nrow(X)])	
+}
 
 #Training the rbm
 rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
@@ -106,7 +119,11 @@ predict_norm_list[[dim(configs)[1]]] <- pred_norm
 nn_list[[dim(configs)[1]]] <- nn
 
 # Histogram of y_train
-sort(table(df[,'Return_to_pred']),decreasing=TRUE)
+if(OneClassOutput){
+	sort(table(df[,'Return_binary']),decreasing=TRUE)
+}else{
+	sort(table(df[,'Return_to_pred']),decreasing=TRUE)
+}
 
 #Printing information
 configs
