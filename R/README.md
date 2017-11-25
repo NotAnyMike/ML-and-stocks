@@ -29,6 +29,9 @@ Running a RBM and then using the weights learned from that generative model to i
 
 In order to test the consitency of the library (`deepnet`) the results here were compared to a very simple neural net of one hidden layer without any weights matrix initialization using the python library `Keras`, the results of the keras implementation was an error of $46%$, very close to the results using `deepnet` so the conclusion was the package used in R have no structual problem.(the NN in keras was only run a very few number of times).
 
+The following table contains the results of the experiments run using a non random sampling, just selecting the first 75% examples in order, there are not any change, the score inscreses a little bit but that effect is just because now the test set have more elements with output equal to the mode of the train set
+![deepnet_75_no_random_sampling][deepnet_75_no_random_sampling]
+
 ## Deep Belief Nets using `darch` package
 
 These are the different hyperparameters used and the classification error:
@@ -51,3 +54,4 @@ Using the ReLU activation function does not improve significantly the model
 [relu]: img/AAL_darch_relu_pred-comp.png "Using relu activation function for the first layer"
 [deepnet_AAL]: img/AAL_3_deepnet_20lags.png "Using a different stock and the package deepnet"
 [binary_deepnet]: img/deepnet_rbm_W_init.png "Using rbm as a initialization parameter to a shallow neuralnet"
+[deepnet_75_no_random_sampling]: img/deepnet_75_no_random_sampling.png "using rbm as initialization parameter to a shallow neuralnet and with no random sampling"
