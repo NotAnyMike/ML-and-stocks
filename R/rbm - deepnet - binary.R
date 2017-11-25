@@ -3,7 +3,7 @@ if(exists("configs") == F){
 	library(deepnet)
 	
 	#Creating list to store the differents outputs and information
-	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), using_rbm=logical(), err_score=numeric(), err_score_norm=numeric())
+	configs = data.frame(hidden_rbm=integer(), numempochs_rbm=integer(), batchsize_rbm=integer(), lr_rbm=numeric(), lr_scale_rbm=numeric(), cd=integer(), hidden_nn=character(), lr_nn=numeric(),lr_scale_nn=numeric(), numepochs_nn=integer(), batchsize_nn=numeric(), using_rbm=logical(), err_score=numeric(), err_score_norm=numeric())
 	predict_list <- list()
 	predict_norm_list <- list()
 	nn_list <- list()
@@ -14,18 +14,18 @@ use_rbm <- T
 
 #Hyperparameters for the rbm
 hidden_rbm <- 50
-numepochs_rbm <- 200
+numepochs_rbm <- 20
 batchsize_rbm <- 100
 learningrate_rbm <- 0.1
 learningrate_scale_rbm <- 1
-cd <- 10
+cd <- 200
 
 #Hyperparameters for the neural net
-hidden_nn <- c(50,5)
+hidden_nn <- c(50, 5)
 learningrate_nn <- 0.1
 learningrate_scale_nn <- 0.5
 numepochs_nn <- 5
-batchsize_nn <- 200
+batchsize_nn <- 10
 
 #Loading the files
 df <- read.csv(file="../csv/A_binary.csv", header=T, sep=",", row.names=1, colClasses=c("numeric", "character"))
@@ -100,7 +100,7 @@ for(i in 1:dim(pred_norm)[1]){
 score_norm <- 1- score_norm/dim(pred)[1]
 
 #Saving data into lists
-configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, cd=cd, hidden_nn=paste(hidden_nn,collapse=" "), lr_nn=learningrate_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, using_rbm=use_rbm, err_score=score, err_score_norm = score_norm))
+configs <- rbind(configs,data.frame(hidden_rbm=hidden_rbm, numempochs_rbm = numepochs_rbm, batchsize_rbm=batchsize_rbm, lr_rbm=learningrate_rbm, lr_scale_rbm=learningrate_scale_rbm, cd=cd, hidden_nn=paste(hidden_nn,collapse=" "), lr_nn=learningrate_nn, lr_scale_nn=learningrate_scale_nn, numepochs_nn=numepochs_nn, batchsize_nn=batchsize_nn, using_rbm=use_rbm, err_score=score, err_score_norm = score_norm))
 predict_list[[dim(configs)[1]]] <- pred
 predict_norm_list[[dim(configs)[1]]] <- pred_norm
 nn_list[[dim(configs)[1]]] <- nn
