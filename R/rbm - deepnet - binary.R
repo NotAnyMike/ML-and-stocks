@@ -58,6 +58,11 @@ X_test <- as.matrix(X[-train_ind,])
 y_train <- as.matrix(y[train_ind,])
 y_test <- as.matrix(y[-train_ind,])
 
+X_train <- as.matrix(X[1:smp_size,])
+X_test <- as.matrix(X[smp_size:nrow(df),])
+y_train <- as.matrix(y[1:smp_size,])
+y_test <- as.matrix(y[smp_size:nrow(df),])
+
 #Training the rbm
 rbm <- rbm.train(x=X_train, hidden=hidden_rbm, numepochs = numepochs_rbm, batchsize = batchsize_rbm, learningrate = learningrate_rbm, learningrate_scale = learningrate_scale_rbm, momentum = 0.5, visible_type = "bin", hidden_type = "bin", cd = cd)
 
