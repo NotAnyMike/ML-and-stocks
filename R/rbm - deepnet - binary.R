@@ -121,6 +121,8 @@ nn_list[[dim(configs)[1]]] <- nn
 # Histogram of y_train
 if(OneClassOutput){
 	sort(table(df[,'Return_binary']),decreasing=TRUE)
+	sort(table(y_test),decreasing=TRUE)
+	sort(table(y_train),decreasing=TRUE)
 }else{
 	sort(table(df[,'Return_to_pred']),decreasing=TRUE)
 }
